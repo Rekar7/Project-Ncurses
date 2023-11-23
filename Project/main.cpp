@@ -29,6 +29,8 @@ int main()
 	getch();
 
 
+	clear();	//wyczyszcza ekran
+
 	//usuwa pamiêæ i zamyka ncurses
 	endwin();
 
