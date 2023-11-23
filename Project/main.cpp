@@ -8,6 +8,27 @@ int main()
 	//czyœci ekran
 	initscr();
 
+	int height=10, width=20, start_y=10, start_x=10;
+
+	WINDOW* win=newwin(height, width, start_y, start_x);	//tworzy nowe okno // w nucruses zawsze w kordach najpierw jest
+							//y, a potem x
+
+
+	refresh();	//odœwie¿yæ wszystko, ¿eby ncurses wiedzia³, ¿e zrobiliœmy okono
+
+
+	
+	box(win, 0, 0);	// robi kwadrat wokó³ okna
+	mvwprintw(win, 1, 1, "szczepan");	//rysuje w oknie
+	wrefresh(win);	//odœwie¿amy okno
+
+	getch();
+
+	//usuwa pamiêæ i zamyka ncurses
+	endwin();
+
+	/*
+
 	//rysuje stringa w oknie
 	printw("hello world");
 
@@ -31,8 +52,8 @@ int main()
 
 	clear();	//wyczyszcza ekran
 
-	//usuwa pamiêæ i zamyka ncurses
-	endwin();
+	*/
+
 
 	return 0;
 }
