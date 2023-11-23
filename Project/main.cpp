@@ -27,10 +27,55 @@ int main()
 	//wborder(win, left, right, top, bottom, corner1, corner2, corner3, corner4);
 
 
-	box(win, 0, 0);	// robi kwadrat wokó³ okna
-	mvwprintw(win, 1, 1, "szczepan");	//rysuje w oknie
-	wrefresh(win);	//odœwie¿amy okno
+	
 
+	if (!has_colors())	//has_colors() zwraca true jak terminal mo¿e uzywaæ kolorów
+	{
+		printw("Terminal nie obs³uguje kolorów");
+		getch();
+		return -1;
+	}
+	/*
+	* Wszystkie kolory w terminalu
+	* 
+	COLOR_BLACK
+	COLOR_RED
+	COLOR_GREEN
+	COLOR_YELLOW
+	COLOR_BLUE
+	COLOR_MAGENTA
+	COLOR_CYAN
+	COLOR_WHITE
+	*/
+	start_color();	//startuje kolory dla terminala
+
+	//can_change_color();	//zwraca true jak mo¿na zmieniaæ kolory w terminalu
+
+	init_pair(1, COLOR_CYAN, COLOR_WHITE);	//najpierw znaki potem t³o znaku
+
+	//init_color(COLOR_CYAN, 0 - 999, 0 - 999, 0 - 999);	// zmienia kolor COLOR_CYAN na podan¹ wartoœæ RGB
+
+	init_color(COLOR_CYAN, 999, 0, 0);
+
+	attron(COLOR_PAIR(1));	//stosuje nasze kolory jako atrybut
+
+	//A_REVERSE zamienia kolor t³a znaku z kolorem znaku
+	//A_STANDOUT zakreœla tekst jakby markerem
+	//A_BLINK jeszcze inne t³o tekstu
+	//A_DIM nwm co robi
+	//A_BOLD nwm co robi chyba powinnien pisaæ w pogrubiony tekst
+	//A_PROTECT nwm co robi
+	//A_INVIS ma niby robiæ niewidzialny tekst
+	//A_ALTCHARSET pisze chiñskie znaczki
+	//A_CHARTEXT nwm co robi zgaduje, ¿e nic po u¿ywa zwyk³ego  chara
+
+	attron(A_CHARTEXT);	//atrybut w³¹cz
+	box(win, 0, 0);	// robi kwadrat wokó³ okna
+	printw("szczepan");	
+	//mvwprintw(win, 1, 1, "szczepan");	//rysuje w oknie
+	attroff(COLOR_PAIR(1));	//wy³¹cza atrybut podany w argumencie
+
+	wrefresh(win);	//odœwie¿amy okno
 	getch();
 
 	//usuwa pamiêæ i zamyka ncurses
