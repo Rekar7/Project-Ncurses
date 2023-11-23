@@ -34,8 +34,8 @@ int main()
 	getch();
 
 	//usuwa pamiêæ i zamyka ncurses
-	endwin();
-
+	endwin();kjl
+		kllk
 	/*
 
 	//rysuje stringa w oknie
