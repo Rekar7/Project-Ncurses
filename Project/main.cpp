@@ -22,6 +22,9 @@ int main()
 
 	printw("%d", c); //wyœwielta zmienn¹ c
 
+	mvprintw(40, 60, "ucin");	//robi move'a i printuje
+
+
 	//zwraca naciœniêty przycisk
 	getch();
 
