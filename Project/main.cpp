@@ -10,9 +10,7 @@
 
 void update(WINDOW* win, STARSHIP& starship)
 {
-	halfdelay(1);
-	int keyPressed = wgetch(win);
-	starship.movement(keyPressed);
+	starship.movement();
 }
 
 void draw(WINDOW* win, STARSHIP& starship)
@@ -39,28 +37,6 @@ int main()
 		//inicjalizuje ekran
 		//czyœci ekran
 	initscr();
-
-
-	//rysuje stringa w oknie
-	printw("hello world");
-
-	//odœwie¿a ekran
-	refresh();
-
-	//przesuwa kursor do podanych kordów i na tych kordach s¹ pisane rzeczy  
-
-	move(10, 20); // move(y, x);
-
-	int c = getch();
-
-	printw("%d", c); //wyœwielta zmienn¹ c
-
-	//zwraca naciœniêty przycisk
-	getch();
-
-	cbreak();	//jak wciœniesz ctrl+c to program siê zamknie dzia³a defaultowo
-
-	//raw();		//raw input jak wciœniesz ctrl+c to ctrl te¿ siê wyœwietli
 
 	noecho();	//input nie pokazuje siê na ekranie
 

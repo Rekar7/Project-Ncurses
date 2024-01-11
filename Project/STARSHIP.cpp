@@ -1,4 +1,4 @@
-#include "STARSHIP.h"
+﻿#include "STARSHIP.h"
 #include <curses.h>
 #include <windows.h>
 
@@ -7,33 +7,57 @@ STARSHIP::STARSHIP()
 	x = 50;
 	y = 15;
 	hp = 100;
-	speed = 0.05;
-	width = 10;
-	height = 3;
 }
 
 void STARSHIP::draw(WINDOW* win)
 {
-	mvwvline(win, y, x, '|', height);
-	mvwhline(win, y - (height / 2), x, '-', width);
-	mvwhline(win, y + (height), x, '-', width);
-	mvwvline(win, y, x+width, '|', height);
-	
-	//mvwprintw(win, y, x, "a");		//w�wietla kordy x i a
+	mvwprintw(win, y + 1, x, "|");
+	mvwhline(win, y, x, '#', width);
+	mvwhline(win, y + (height)-1, x, '#', width);
+	mvwprintw(win, y + 1, x + width - 1, "|");
+	mvwprintw(win, y + 1, x - 2, ">>");
+
+
+
+	mvwprintw(win, y + (height / 2), x + width, "==");
+
+	//mvwprintw(win, y, x, "a");		//wświetla kordy x i a
 
 }
 
-void STARSHIP::movement(int keyPressed)
+void STARSHIP::movement()
 {
-	switch (keyPressed)
+	if (GetAsyncKeyState(0x44))
 	{
-	case KEY_RIGHT:
-	{
-		int a = true;
 		x += speed;
 	}
+	if (GetAsyncKeyState(0x41))
+	{
+		x -= speed;
+	}
+	if (GetAsyncKeyState(0x57))
+	{
+		y -= speed/ySpeedModifier;
+	}
+	if (GetAsyncKeyState(0x53))
+	{
+		y += speed / ySpeedModifier;
+	}
 
-	default:
-		break;
+	if (x < 1)
+	{
+		x = 1;
+	}
+	if (x + width > 120)
+	{
+		x = 120 - width;
+	}
+	if (y < 1)
+	{
+		y = 1;
+	}
+	if (y + height > 30)
+	{
+		y = 30 - height;
 	}
 }

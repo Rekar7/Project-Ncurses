@@ -7,12 +7,13 @@ public:
 	STARSHIP();
 	void draw(WINDOW*);
 
-	void movement(int);
+	void movement();
 private:
-	int x, y, hp;
-	int width, height;
-	double speed;
-	int ySpeedModifier = 2;	//prêdkoœæ osi y jest dwa razy wolniejsza
+	double x, y;
+	int hp;
+	const int width=5, height=3;
+	const double speed=0.5;
+	const int ySpeedModifier = 2;	//prêdkoœæ osi y jest dwa razy wolniejsza
 
 };
 
