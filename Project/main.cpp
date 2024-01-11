@@ -25,6 +25,10 @@ void draw(WINDOW* win, STARSHIP& starship, METEOR& meteor, bool gameOver)
 
 	starship.draw(win);
 	meteor.draw(win);
+	
+
+
+	starship.drawHUD(win);
 
 	if (gameOver == true)
 	{

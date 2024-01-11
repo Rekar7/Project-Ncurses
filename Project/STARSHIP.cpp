@@ -1,5 +1,4 @@
 ﻿#include "STARSHIP.h"
-#include <charconv>
 #include <string>
 #include <curses.h>
 #include <windows.h>
@@ -67,10 +66,8 @@ void STARSHIP::movement()
 
 void STARSHIP::drawHUD(WINDOW* win)
 {
-	int length = std::to_string(hp).length();
-	char* charArray = new char[length];
-	
-
+	mvwprintw(win, 1, 1, "HP: %d", hp);
+	mvwprintw(win, 2, 1, "AMMO: %d", ammo);
 }
 
 double STARSHIP::getX()
