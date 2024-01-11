@@ -7,6 +7,7 @@ public:
 	STARSHIP();
 	void draw(WINDOW*);
 	void movement();
+	void drawHUD(WINDOW*);
 
 	double getX();
 	double getY();
