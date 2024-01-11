@@ -6,7 +6,8 @@ STARSHIP::STARSHIP()
 {
 	x = 50;
 	y = 15;
-	hp = 100;
+	hp = 3;
+	ammo = 0;
 }
 
 void STARSHIP::draw(WINDOW* win)
@@ -60,4 +61,24 @@ void STARSHIP::movement()
 	{
 		y = 30 - height;
 	}
+}
+
+double STARSHIP::getX()
+{
+	return x;
+}
+
+double STARSHIP::getY()
+{
+	return y;
+}
+
+int STARSHIP::getWidth()
+{
+	return width;
+}
+
+int STARSHIP::getHeight()
+{
+	return height;
 }

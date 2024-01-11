@@ -3,21 +3,33 @@
 #include <string>
 #include <windows.h>
 #include "STARSHIP.h"
+#include "METEOR.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////					FUNCTIONS								    ////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-void update(WINDOW* win, STARSHIP& starship)
+void update(WINDOW* win, STARSHIP& starship, METEOR& meteor, bool& gameOver)
 {
 	starship.movement();
+	meteor.movement();
+	if (meteor.checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()))
+	{
+		gameOver = true;
+	}
 }
 
-void draw(WINDOW* win, STARSHIP& starship)
+void draw(WINDOW* win, STARSHIP& starship, METEOR& meteor, bool gameOver)
 {
 	box(win, 0, 0);	// robi kwadrat wokó³ okna
 
 	starship.draw(win);
+	meteor.draw(win);
+
+	if (gameOver == true)
+	{
+		mvwprintw(win, 15, 80, "KONIEC GRY!");
+	}
 
 }
 
@@ -63,25 +75,34 @@ int main()
 
 
 	STARSHIP starship;
+	METEOR meteor;
 
+
+	bool gameOver = false;
 	////////////////////////////////////////////////////////////////////////////////////
 	///////////					GAME LOOP									////////////
 	////////////////////////////////////////////////////////////////////////////////////
 
-	while (1)
+	while (gameOver == false)
 	{
 
-		update(win, starship);	//update stanu gry
+		update(win, starship, meteor, gameOver);	//update stanu gry
 
-		draw(win, starship);		//rysuje gre
+		draw(win, starship, meteor, gameOver);		//rysuje gre
 
 		wrefresh(win);	//odœwie¿amy okno
 
 		Sleep(33);
-
-		wclear(win);
-
-		clear();
+		
+		if (gameOver == false)
+		{
+			wclear(win);
+		}
+		else
+		{
+			Sleep(5000);
+			getch();
+		}
 
 	}
 

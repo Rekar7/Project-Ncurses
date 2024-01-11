@@ -128,9 +128,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="METEOR.cpp" />
     <ClCompile Include="STARSHIP.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="METEOR.h" />
     <ClInclude Include="STARSHIP.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
