@@ -5,9 +5,9 @@
 
 STARSHIP::STARSHIP()
 {
+	score = 0;
 	x = 50;
 	y = 15;
-	hp = 3;
 	ammo = 0;
 	science = 0;
 	shooted = 0;
@@ -72,25 +72,45 @@ void STARSHIP::movement()
 
 void STARSHIP::drawHUD(WINDOW* win)
 {
-	mvwprintw(win, 1, 1, "HP: %d", hp);
-	mvwprintw(win, 2, 1, "AMMO: %d", ammo);
-	mvwprintw(win, 3, 1, "SCIENCE: %d", science);
+	mvwprintw(win, 1, 1, "AMMO: %d", ammo);
+	mvwprintw(win, 2, 1, "SCIENCE: %d", science);
+	mvwprintw(win, 3, 1, "SCORE: %d", score);
 }
 
-void STARSHIP::moreAmmo(bool ammoPack)
+void STARSHIP::scoreUpdate(int type)
+{
+	switch (type)
+	{
+	case 1:
+		score += 10;
+	case 2:
+		score += 3;
+	default:
+		score += 1;
+		break;
+	}
+}
+
+bool STARSHIP::moreAmmo(bool ammoPack)
 {
 	if (ammoPack == true)
 	{
 		ammo+=3;
+		return true;
 	}
+
+	return false;
 }
 
-void STARSHIP::gatherScience(bool sciencePack)
+bool STARSHIP::gatherScience(bool sciencePack)
 {
 	if (sciencePack == true)
 	{
 		science++;
+		return true;
 	}
+
+	return false;
 }
 
 bool STARSHIP::shoot()

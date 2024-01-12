@@ -9,6 +9,7 @@ public:
 	void movement();
 	void spawn();
 
+	bool outsideMap(WINDOW* win);
 	double getX();
 	double getY();
 	int getWidth();
@@ -21,7 +22,6 @@ protected:
 	double speedX, speedY;
 	int ySpeedModifier = 2;
 private:
-	int hp;
-	int width = 1, height = 1;	
+	int width = 2, height = 2;	
 };
 

@@ -3,7 +3,7 @@
 
 MISSILE::MISSILE()
 {
-	x = 140;
+	x = 125;
 	y = 3;
 	speedX = 0;
 	speedY = 0;
@@ -26,24 +26,4 @@ void MISSILE::shoot(double xStarship, double yStarship,int widthStarship, int he
 		x = xStarship + widthStarship;
 		y = yStarship + heightStarship/2;
 	
-}
-
-double MISSILE::getX()
-{
-	return x;
-}
-
-double MISSILE::getY()
-{
-	return y;
-}
-
-int MISSILE::getWidth()
-{
-	return width;
-}
-
-int MISSILE::getHeight()
-{
-	return height;
 }
