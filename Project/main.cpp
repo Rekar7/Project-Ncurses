@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <time.h> 
 #include <vector>
+#include <fstream>
 #include "STARSHIP.h"
 #include "METEOR.h"
 #include "AMMOPACK.h"
@@ -16,26 +17,43 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-void spawn(METEOR meteor, AMMOPACK ammopack, MISSILE missile, SCIENCEPACK sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<SCIENCEPACK>& sciencepacks)
+void save(std::fstream& file, STARSHIP starship)
+{
+	file.open("save.txt", std::ios::out);
+	if (file.good())
+	{
+		file << starship.getHighScore();
+		file.flush();
+	}
+	file.close();
+}
+
+
+void spawn(STARSHIP starship, METEOR meteor, AMMOPACK ammopack, MISSILE missile, SCIENCEPACK sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<SCIENCEPACK>& sciencepacks)
 {
 
-	int meteorChance = rand() % 1000;
-	int ammoChance = rand() % 1000;
-	int scienceChance = rand() % 1000;
+	int meteorChance = 20 + starship.getScore() / 25;
+	int ammoChance = 20 - starship.getScore() / 35;
+	int scienceChance = 5;
 
-	if (meteorChance < 50)
+	if (ammoChance < 1)
+	{
+		ammoChance = 1;
+	}
+
+	if (rand() % 1000 < meteorChance)
 	{
 		meteor.spawn();
 		meteors.push_back(meteor);
 	}
 
-	if (ammoChance < 20)
+	if (rand() % 1000 < ammoChance)
 	{
 		ammopack.spawn();
 		ammopacks.push_back(ammopack);
 	}
 
-	if (scienceChance < 10)
+	if (rand() % 1000 < scienceChance)
 	{
 		sciencepack.spawn();
 		sciencepacks.push_back(sciencepack);
@@ -48,7 +66,7 @@ void spawn(METEOR meteor, AMMOPACK ammopack, MISSILE missile, SCIENCEPACK scienc
 
 void update(WINDOW* win, STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack, MISSILE& missile, SCIENCEPACK& sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<MISSILE>& missiles, std::vector<SCIENCEPACK>& sciencepacks, bool& gameOver, int& score)
 {
-	spawn(meteor, ammopack, missile, sciencepack, meteors, ammopacks, sciencepacks);
+	spawn(starship, meteor, ammopack, missile, sciencepack, meteors, ammopacks, sciencepacks);
 
 	///ddd
 	starship.movement();
@@ -247,6 +265,7 @@ int main()
 
 	refresh();
 
+	std::fstream file;
 
 	STARSHIP starship;
 	METEOR meteor;
@@ -261,6 +280,17 @@ int main()
 
 	bool gameOver = false;
 	int score = 0;
+
+	int a = 0;
+	file.open("save.txt", std::ios::in);
+	if (file.good() == true)
+	{
+		file >> a;
+	}
+	starship.setHighScore(a);
+
+	file.close();
+
 	////////////////////////////////////////////////////////////////////////////////////
 	///////////					GAME LOOP									////////////
 	////////////////////////////////////////////////////////////////////////////////////
@@ -276,12 +306,14 @@ int main()
 
 		Sleep(33);
 		
+
 		if (gameOver == false)
 		{
 			wclear(win);
 		}
 		else
 		{
+			save(file, starship);
 			Sleep(5000);
 			getch();
 		}

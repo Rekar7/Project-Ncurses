@@ -5,6 +5,7 @@
 
 STARSHIP::STARSHIP()
 {
+	highScore = 0;
 	score = 0;
 	x = 50;
 	y = 15;
@@ -75,6 +76,7 @@ void STARSHIP::drawHUD(WINDOW* win)
 	mvwprintw(win, 1, 1, "AMMO: %d", ammo);
 	mvwprintw(win, 2, 1, "SCIENCE: %d", science);
 	mvwprintw(win, 3, 1, "SCORE: %d", score);
+	mvwprintw(win, 29, 1, "HIGHSCORE: %d", highScore);
 }
 
 void STARSHIP::scoreUpdate(int type)
@@ -88,6 +90,10 @@ void STARSHIP::scoreUpdate(int type)
 	default:
 		score += 1;
 		break;
+	}
+	if (score > highScore)
+	{
+		highScore = score;
 	}
 }
 
@@ -148,4 +154,19 @@ int STARSHIP::getWidth()
 int STARSHIP::getHeight()
 {
 	return height;
+}
+
+int STARSHIP::getScore()
+{
+	return score;
+}
+
+int STARSHIP::getHighScore()
+{
+	return highScore;
+}
+
+void STARSHIP::setHighScore(int a)
+{
+	highScore = a;
 }
