@@ -9,10 +9,14 @@ STARSHIP::STARSHIP()
 	y = 15;
 	hp = 3;
 	ammo = 0;
+	science = 0;
+	shooted = 0;
 }
 
 void STARSHIP::draw(WINDOW* win)
 {
+	wattron(win, COLOR_PAIR(2));
+
 	mvwprintw(win, y + 1, x, "|");
 	mvwhline(win, y, x, '#', width);
 	mvwhline(win, y + (height)-1, x, '#', width);
@@ -22,6 +26,8 @@ void STARSHIP::draw(WINDOW* win)
 
 
 	mvwprintw(win, y + (height / 2), x + width, "==");
+
+	wattroff(win, COLOR_PAIR(2));
 
 	//mvwprintw(win, y, x, "a");		//wświetla kordy x i a
 
@@ -46,17 +52,17 @@ void STARSHIP::movement()
 		y += speed / ySpeedModifier;
 	}
 
-	if (x < 1)
+	if (x < 0)
 	{
-		x = 1;
+		x = 0;
 	}
 	if (x + width > 120)
 	{
 		x = 120 - width;
 	}
-	if (y < 1)
+	if (y < 0)
 	{
-		y = 1;
+		y = 0;
 	}
 	if (y + height > 30)
 	{
@@ -68,6 +74,40 @@ void STARSHIP::drawHUD(WINDOW* win)
 {
 	mvwprintw(win, 1, 1, "HP: %d", hp);
 	mvwprintw(win, 2, 1, "AMMO: %d", ammo);
+	mvwprintw(win, 3, 1, "SCIENCE: %d", science);
+}
+
+void STARSHIP::moreAmmo(bool ammoPack)
+{
+	if (ammoPack == true)
+	{
+		ammo+=3;
+	}
+}
+
+void STARSHIP::gatherScience(bool sciencePack)
+{
+	if (sciencePack == true)
+	{
+		science++;
+	}
+}
+
+bool STARSHIP::shoot()
+{
+	if ((GetAsyncKeyState(VK_SPACE)) && (ammo > 0) && (shooted < 1))
+	{
+		ammo--;
+		shooted = 25;
+		return true;
+	}
+
+	if (shooted > 0)
+	{
+		shooted--;
+	}
+
+	return false;
 }
 
 double STARSHIP::getX()

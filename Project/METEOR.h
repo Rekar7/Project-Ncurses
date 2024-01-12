@@ -15,11 +15,12 @@ public:
 
 	bool checkHitbox(double checkX, double checkY, int checkWidth, int checkHeight);
 
-private:
+protected:
 	double x, y;
-	int hp;
-	const int width = 5, height = 3;
 	double speedX, speedY;
 	const int ySpeedModifier = 2;
+private:
+	int hp;
+	const int width = 1, height = 1;	
 };
 

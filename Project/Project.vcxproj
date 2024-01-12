@@ -131,12 +131,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AMMOPACK.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="METEOR.cpp" />
+    <ClCompile Include="MISSILE.cpp" />
+    <ClCompile Include="SCIENCEPACK.cpp" />
     <ClCompile Include="STARSHIP.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AMMOPACK.h" />
     <ClInclude Include="METEOR.h" />
+    <ClInclude Include="MISSILE.h" />
+    <ClInclude Include="SCIENCEPACK.h" />
     <ClInclude Include="STARSHIP.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
