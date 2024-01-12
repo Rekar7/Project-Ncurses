@@ -7,6 +7,7 @@ public:
 	METEOR();
 	void draw(WINDOW*);
 	void movement();
+	void spawn();
 
 	double getX();
 	double getY();
@@ -18,9 +19,9 @@ public:
 protected:
 	double x, y;
 	double speedX, speedY;
-	const int ySpeedModifier = 2;
+	int ySpeedModifier = 2;
 private:
 	int hp;
-	const int width = 1, height = 1;	
+	int width = 1, height = 1;	
 };
 

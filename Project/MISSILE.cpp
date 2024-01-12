@@ -27,3 +27,23 @@ void MISSILE::shoot(double xStarship, double yStarship,int widthStarship, int he
 		y = yStarship + heightStarship/2;
 	
 }
+
+double MISSILE::getX()
+{
+	return x;
+}
+
+double MISSILE::getY()
+{
+	return y;
+}
+
+int MISSILE::getWidth()
+{
+	return width;
+}
+
+int MISSILE::getHeight()
+{
+	return height;
+}

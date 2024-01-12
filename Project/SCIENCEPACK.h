@@ -10,6 +10,6 @@ public:
     void draw(WINDOW* win);
     bool checkHitbox(double checkX, double checkY, int checkWidth, int checkHeight);
 private:
-    const int width = 1, height = 1;
+    int width = 1, height = 1;
 };
 

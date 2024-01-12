@@ -22,6 +22,11 @@ void METEOR::movement()
 	y += speedY / ySpeedModifier;
 }
 
+void METEOR::spawn()
+{
+	y = rand() % 30;
+}
+
 double METEOR::getX()
 {
 	return x;

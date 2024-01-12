@@ -16,49 +16,123 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 
+void spawn(METEOR meteor, AMMOPACK ammopack, MISSILE missile, SCIENCEPACK sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<SCIENCEPACK>& sciencepacks)
+{
+
+	int meteorChance = rand() % 1000;
+	int ammoChance = rand() % 1000;
+	int scienceChance = rand() % 1000;
+
+	if (meteorChance < 50)
+	{
+		meteor.spawn();
+		meteors.push_back(meteor);
+	}
+
+	if (ammoChance < 20)
+	{
+		ammopack.spawn();
+		ammopacks.push_back(ammopack);
+	}
+
+	if (scienceChance < 10)
+	{
+		sciencepack.spawn();
+		sciencepacks.push_back(sciencepack);
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////					  UPDATE								    ////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-void update(WINDOW* win, STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack, MISSILE& missile, SCIENCEPACK& sciencepack, bool& gameOver)
+void update(WINDOW* win, STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack, MISSILE& missile, SCIENCEPACK& sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<MISSILE>& missiles, std::vector<SCIENCEPACK>& sciencepacks, bool& gameOver)
 {
+	spawn(meteor, ammopack, missile, sciencepack, meteors, ammopacks, sciencepacks);
+
+	
+
 	starship.movement();
 	if (starship.shoot() == true)
 	{
 		missile.shoot(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight());
+		missiles.push_back(missile);
 	}
-	meteor.movement();
-	ammopack.movement();
-	sciencepack.movement();
-	missile.movement();
-	if (meteor.checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()))
+
+	for (int i = 0; i < ammopacks.size(); i++)
 	{
-		gameOver = true;
+		ammopacks[i].movement();
+		starship.moreAmmo(ammopacks[i].checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()));
+	}
+	
+	for (int i = 0; i < sciencepacks.size(); i++)
+	{
+		sciencepacks[i].movement();
+		starship.gatherScience(sciencepacks[i].checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()));
+	}
+	
+	for (int i = 0; i < missiles.size(); i++)
+	{
+
+		missiles[i].movement();
+
+		for (int j = 0; j < meteors.size(); j++)
+		{
+			missiles[i].checkHitbox(meteors[j].getX(), meteors[j].getY(), meteors[j].getWidth(), meteors[j].getHeight());
+		}
+	
 	}
 
-	starship.moreAmmo(ammopack.checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()));
-	starship.gatherScience(sciencepack.checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()));
+	for (int i = 0; i < meteors.size(); i++)
+	{
 
-	
-	missile.checkHitbox(meteor.getX(),meteor.getY(),meteor.getWidth(),meteor.getHeight());
+		for (int j = 0; j < missiles.size(); j++)
+		{
+			if (meteors[i].checkHitbox(missiles[j].getX(), missiles[j].getY(), missiles[j].getWidth(), missiles[j].getHeight()) == true)
+			{
+				meteors.erase(meteors.begin() + i);
+				missiles.erase(missiles.begin() + j);
+				break;
+			}
+		}
 
-	
+		meteors[i].movement();
+		if (meteors[i].checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()))
+		{
+			gameOver = true;
+		}
+	}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////					     DRAW								    ////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-void draw(WINDOW* win, STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack, MISSILE& missile, SCIENCEPACK& sciencepack, bool gameOver)
+void draw(WINDOW* win, STARSHIP& starship, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<MISSILE>& missiles, std::vector<SCIENCEPACK>& sciencepacks, bool gameOver)
 {
 	box(win, 0, 0);	// robi kwadrat wokó³ okna
 
+	for (int i = 0; i < meteors.size(); i++)
+	{
+		meteors[i].draw(win);
+	}
 	
-	meteor.draw(win);
-	missile.draw(win);
-	ammopack.draw(win);
-	sciencepack.draw(win);
+	for (int i = 0; i < missiles.size(); i++)
+	{
+		missiles[i].draw(win);
+	}
 
+	for (int i = 0; i < ammopacks.size(); i++)
+	{
+		ammopacks[i].draw(win);
+	}
+
+	for (int i = 0; i < sciencepacks.size(); i++)
+	{
+		sciencepacks[i].draw(win);
+	}
+	
 	starship.draw(win);
 
 
@@ -126,6 +200,11 @@ int main()
 	MISSILE missile;
 	SCIENCEPACK sciencepack;
 
+	std::vector<METEOR> meteors;
+	std::vector<AMMOPACK> ammopacks;
+	std::vector<MISSILE> missiles;
+	std::vector<SCIENCEPACK> sciencepacks;
+
 	bool gameOver = false;
 	////////////////////////////////////////////////////////////////////////////////////
 	///////////					GAME LOOP									////////////
@@ -134,9 +213,9 @@ int main()
 	while (gameOver == false)
 	{
 
-		update(win, starship, meteor, ammopack, missile, sciencepack, gameOver);	//update stanu gry
+		update(win, starship, meteor, ammopack, missile, sciencepack, meteors, ammopacks, missiles, sciencepacks, gameOver); //update stanu gry
 
-		draw(win, starship, meteor, ammopack, missile, sciencepack, gameOver);		//rysuje gre
+		draw(win, starship, meteors, ammopacks, missiles, sciencepacks, gameOver);		//rysuje gre
 
 		wrefresh(win);	//odœwie¿amy okno
 
