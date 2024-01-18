@@ -9,7 +9,7 @@ public:
 	void movement();
 	void spawn();
 
-	bool outsideMap(WINDOW* win);
+	bool outsideMap();
 	double getX();
 	double getY();
 	int getWidth();

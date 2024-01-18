@@ -26,26 +26,22 @@ void METEOR::spawn()
 	y = rand() % 30;
 }
 
-bool METEOR::outsideMap(WINDOW* win)
+bool METEOR::outsideMap()
 {
-	if (x < -20)
+	if (x < -10)
 	{
-		mvwprintw(win, 29, 1, "UCIN");
 		return true;
 	}
 	if (x + width > 130)
 	{
-		mvwprintw(win, 29, 1, "UCIN");
 		return true;
 	}
 	if (y < -10)
 	{
-		mvwprintw(win, 29, 1, "UCIN");
 		return true;
 	}
 	if (y + height > 40)
 	{
-		mvwprintw(win, 29, 1, "UCIN");
 		return true;
 	}
 
