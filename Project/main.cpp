@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <curses.h>
 #include <string>
 #include <windows.h>
@@ -29,7 +29,7 @@ void save(std::fstream& file, STARSHIP starship)
 }
 
 
-void spawn(STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack, MISSILE& missile, SCIENCEPACK& sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<SCIENCEPACK>& sciencepacks)
+void spawn(STARSHIP starship, METEOR meteor, AMMOPACK ammopack, MISSILE missile, SCIENCEPACK sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<SCIENCEPACK>& sciencepacks)
 {
 
 	int meteorChance = 20 + starship.getScore() / 25;
@@ -68,126 +68,111 @@ void update(WINDOW* win, STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack,
 {
 	spawn(starship, meteor, ammopack, missile, sciencepack, meteors, ammopacks, sciencepacks);
 
-	//gracz
+	//starship
 	starship.movement();
-	//strzelanie
- 	if (starship.shoot() == true)
+	if (starship.shoot() == true)
 	{
 		missile.shoot(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight());
 		missiles.push_back(missile);
 	}
 
-
-	// ammopacki
-	if (!ammopacks.empty())
+	//ammopacks
+	for (int i = 0; i < ammopacks.size(); i++)
 	{
-		for (auto it = ammopacks.begin(); it != ammopacks.end(); )
+		ammopacks[i].movement();
+		if (starship.moreAmmo(ammopacks[i].checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight())) == true)
 		{
-			it->movement();
-			if (starship.moreAmmo(it->checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight())) == true)
-			{
-				it = ammopacks.erase(it);
-				continue;
-			}
-
-			if (it->outsideMap() == true)
-			{
-				it = ammopacks.erase(it);
-				continue;
-			}
-
-			++it;
+			ammopacks.erase(ammopacks.begin() + i);
+			continue;
 		}
+
+		if (ammopacks[i].outsideMap() == true)
+		{
+			ammopacks.erase(ammopacks.begin() + i);
+			continue;
+		}
+	}
+
+	//sciencepacks
+	for (int i = 0; i < sciencepacks.size(); i++)
+	{
+		sciencepacks[i].movement();
+
+		if (starship.gatherScience(sciencepacks[i].checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight())) == true)
+		{
+			starship.scoreUpdate(1);
+
+			sciencepacks.erase(sciencepacks.begin() + i);
+			//i--;
+			continue;
+		}
+
+		if (sciencepacks[i].outsideMap() == true)
+		{
+			sciencepacks.erase(sciencepacks.begin() + i);
+			//i--;
+			continue;
+		}
+	}
+
+	//missiles
+	for (int i = 0; i < missiles.size(); i++)
+	{
+
+		missiles[i].movement();
+
+		for (int j = 0; j < meteors.size(); j++)
+		{
+			missiles[i].checkHitbox(meteors[j].getX(), meteors[j].getY(), meteors[j].getWidth(), meteors[j].getHeight());
+		}
+
+		if ((missiles[i].outsideMap() == true) && (missiles.size() > 1))
+		{
+			missiles.erase(missiles.begin() + i);
+			i--;
+			continue;
+		}
+
 	}
 	
-
-	// sciencpacki
-	if (!sciencepacks.empty())
+	//meteors
+	for (int i = 0; i < meteors.size(); i++)
 	{
-		for (auto it = sciencepacks.begin(); it != sciencepacks.end(); )
+		meteors[i].movement();
+
+		for (int j = 0; j < missiles.size(); j++)
 		{
-			it->movement();
-
-			if (starship.gatherScience(it->checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight())) == true)
+			if (meteors[i].checkHitbox(missiles[j].getX(), missiles[j].getY(), missiles[j].getWidth(), missiles[j].getHeight()) == true)
 			{
-				starship.scoreUpdate(1);
-				it = sciencepacks.erase(it);
-				continue;
-			}
+				starship.scoreUpdate(2);
 
-			if (it->outsideMap() == true)
-			{
-				it = sciencepacks.erase(it);
-				continue;
+				meteors.erase(meteors.begin() + i);
+				missiles.erase(missiles.begin() + j);
+				break;
 			}
-
-			++it;
 		}
+
+
+		if (meteors[i].checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()))
+		{
+			gameOver = true;
+		}
+
+		if (meteors[i].outsideMap() == true)
+		{
+			meteors.erase(meteors.begin() + i);
+			continue;
+		}
+
+		if (score > 30)
+		{
+			starship.scoreUpdate(3);
+			score = 0;
+		}
+
+
 	}
 
-	// missile
-	if (!missiles.empty())
-	{
-		for (auto it = missiles.begin(); it != missiles.end(); )
-		{
-			it->movement();
-
-			for (auto jt = meteors.begin(); jt != meteors.end(); ++jt)
-			{
-				it->checkHitbox(jt->getX(), jt->getY(), jt->getWidth(), jt->getHeight());
-			}
-
-			if ((it->outsideMap() == true) && (missiles.size() > 1))
-			{
-				it = missiles.erase(it);
-				continue;
-			}
-
-			++it;
-		}
-	}
-
-
-	// meteory
-	if (!meteors.empty())
-	{
-		for (auto it = meteors.begin(); it != meteors.end(); )
-		{
-			it->movement();
-
-			for (auto jt = missiles.begin(); jt != missiles.end(); ++jt)
-			{
-				if (it->checkHitbox(jt->getX(), jt->getY(), jt->getWidth(), jt->getHeight()) == true)
-				{
-					starship.scoreUpdate(2);
-					it = meteors.erase(it);
-					missiles.erase(jt);
-					continue;
-				}
-			}
-
-			if (it->checkHitbox(starship.getX(), starship.getY(), starship.getWidth(), starship.getHeight()))
-			{
-				gameOver = true;
-			}
-
-			if (it->outsideMap() == true)
-			{
-				it = meteors.erase(it);
-				continue;
-			}
-
-			if (score > 30)
-			{
-				starship.scoreUpdate(3);
-				score = 0;
-			}
-
-			++it;
-		}
-	}
-
-	//score
 	score++;
 
 }
@@ -198,13 +183,13 @@ void update(WINDOW* win, STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack,
 
 void draw(WINDOW* win, STARSHIP& starship, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<MISSILE>& missiles, std::vector<SCIENCEPACK>& sciencepacks, bool gameOver)
 {
-	box(win, 0, 0);	// robi kwadrat wokó³ okna
+	box(win, 0, 0);	// robi kwadrat wokÃ³Â³ okna
 
 	for (int i = 0; i < meteors.size(); i++)
 	{
 		meteors[i].draw(win);
 	}
-	
+
 	for (int i = 0; i < missiles.size(); i++)
 	{
 		missiles[i].draw(win);
@@ -219,7 +204,7 @@ void draw(WINDOW* win, STARSHIP& starship, std::vector<METEOR>& meteors, std::ve
 	{
 		sciencepacks[i].draw(win);
 	}
-	
+
 	starship.draw(win);
 
 
@@ -247,15 +232,15 @@ int main()
 
 	srand(time(NULL));
 
-		//inicjalizuje ekran
-		//czyœci ekran
+	//inicjalizuje ekran
+	//czyÅ“ci ekran
 	initscr();
 
-	noecho();	//input nie pokazuje siê na ekranie
+	noecho();	//input nie pokazuje siÃª na ekranie
 
-	if (!has_colors())	//has_colors() zwraca true jak terminal mo¿e uzywaæ kolorów
+	if (!has_colors())	//has_colors() zwraca true jak terminal moÂ¿e uzywaÃ¦ kolorÃ³w
 	{
-		printw("Terminal nie obs³uguje kolorów");
+		printw("Terminal nie obsÂ³uguje kolorÃ³w");
 		getch();
 		return -1;
 	}
@@ -297,7 +282,6 @@ int main()
 	int score = 0;
 
 	int a = 0;
-	//wczytywanie
 	file.open("save.txt", std::ios::in);
 	if (file.good() == true)
 	{
@@ -318,10 +302,10 @@ int main()
 
 		draw(win, starship, meteors, ammopacks, missiles, sciencepacks, gameOver);		//rysuje gre
 
-		wrefresh(win);	//odœwie¿amy okno
+		wrefresh(win);	//odÅ“wieÂ¿amy okno
 
 		Sleep(33);
-		
+
 
 		if (gameOver == false)
 		{
@@ -339,7 +323,7 @@ int main()
 
 
 
-	//usuwa pamiêæ i zamyka ncurses
+	//usuwa pamiÃªÃ¦ i zamyka ncurses
 	endwin();
 
 	return 0;
