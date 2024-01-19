@@ -20,7 +20,7 @@ public:
 protected:
 	double x, y;
 	double speedX, speedY;
-	int ySpeedModifier = 2;
+	//int ySpeedModifier = 2;
 private:
 	int width = 2, height = 2;	
 };

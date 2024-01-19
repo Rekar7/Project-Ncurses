@@ -18,7 +18,7 @@ void METEOR::draw(WINDOW* win)
 void METEOR::movement()
 {
 	x -= speedX;
-	y += speedY / ySpeedModifier;
+	//y += speedY / ySpeedModifier;
 }
 
 void METEOR::spawn()

@@ -29,7 +29,92 @@ void save(std::fstream& file, STARSHIP starship)
 }
 
 
-void spawn(STARSHIP starship, METEOR meteor, AMMOPACK ammopack, MISSILE missile, SCIENCEPACK sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<SCIENCEPACK>& sciencepacks)
+void drawButton(WINDOW* win, int x, int y, std::string text)
+{
+	const char* str = text.c_str();	//zwraca wskaźnik do tablicy znaków (stringa)
+	mvwprintw(win, y + 1, x, "|");
+	mvwhline(win, y, x, '#', 30);
+	mvwhline(win, y + 2, x, '#', 30);
+	mvwprintw(win, y + 1, x + 29, "|");
+	mvwprintw(win, y + 1, x + 1, "siema: %s", str);
+}
+
+void endMenu(WINDOW* win, STARSHIP& starship)
+{
+	std::string str[3] = { "KONIEC!","Highscore: " + std::to_string(starship.getHighScore()),"Score: " + std::to_string(starship.getScore()) };
+	for (int i = 0; i < 3; i++)
+	{
+		wattron(win, COLOR_PAIR(1));
+		drawButton(win, 50, 15 + (i * 3), str[i]);
+		wattroff(win, COLOR_PAIR(1));
+	}
+}
+
+void drawMenu(WINDOW* win, STARSHIP& starship, int selected)
+{
+	std::string str[3] = { "GRAJ","Highscore: " + std::to_string(starship.getHighScore()), "WYJDZ" };
+	for (int i = 0; i < 3; i++)
+	{
+		if(i==selected)
+			wattron(win, COLOR_PAIR(2));
+		drawButton(win, 50, 15 + (i * 3), str[i]);
+		if(i==selected)
+			wattroff(win, COLOR_PAIR(2));
+	}
+
+}
+
+void updateMenu(int& selected, int& timer, char& screen, bool& gameOver)
+{
+	
+
+	if (timer == 0)
+	{
+		if (GetAsyncKeyState(0x57))
+		{
+			timer = 5;
+			selected--;
+			if (selected < 0)
+			{
+				selected = 2;
+			}
+		}
+		if (GetAsyncKeyState(0x53))
+		{
+			timer = 5;
+			selected++;
+			if (selected > 2)
+			{
+				selected = 0;
+			}
+		}
+	}
+	else
+	{
+		timer--;
+	}
+
+	if (GetAsyncKeyState(VK_RETURN))
+	{
+		switch (selected)
+		{
+		case 0:
+		{
+			screen='g';
+			break;
+		}
+		case 2:
+		{
+			gameOver = true;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+}
+
+void spawn(STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack, MISSILE& missile, SCIENCEPACK& sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<SCIENCEPACK>& sciencepacks)
 {
 
 	int meteorChance = 20 + starship.getScore() / 25;
@@ -64,8 +149,13 @@ void spawn(STARSHIP starship, METEOR meteor, AMMOPACK ammopack, MISSILE missile,
 ///////////					  UPDATE								    ////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-void update(WINDOW* win, STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack, MISSILE& missile, SCIENCEPACK& sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<MISSILE>& missiles, std::vector<SCIENCEPACK>& sciencepacks, bool& gameOver, int& score)
+void update(WINDOW* win, STARSHIP& starship, METEOR& meteor, AMMOPACK& ammopack, MISSILE& missile, SCIENCEPACK& sciencepack, std::vector<METEOR>& meteors, std::vector<AMMOPACK>& ammopacks, std::vector<MISSILE>& missiles, std::vector<SCIENCEPACK>& sciencepacks, bool& gameOver, int& score, char& screen)
 {
+	if (GetAsyncKeyState(VK_ESCAPE))
+	{
+		screen = 'm';
+	}
+
 	spawn(starship, meteor, ammopack, missile, sciencepack, meteors, ammopacks, sciencepacks);
 
 	//starship
@@ -278,10 +368,15 @@ int main()
 	std::vector<MISSILE> missiles;
 	std::vector<SCIENCEPACK> sciencepacks;
 
+
 	bool gameOver = false;
 	int score = 0;
+	char screen = 'm'; // m - menu, g - gra
+	int selectedButton = 0;
+	int timer = 0;
 
 	int a = 0;
+	//wczytywanie
 	file.open("save.txt", std::ios::in);
 	if (file.good() == true)
 	{
@@ -297,14 +392,30 @@ int main()
 
 	while (gameOver == false)
 	{
+		
+		switch (screen)
+		{
+		case 'm':
+		{
+			updateMenu(selectedButton, timer, screen, gameOver);
+			drawMenu(win, starship, selectedButton);
+			break;
+		}
+		case 'g':
+		{
+			update(win, starship, meteor, ammopack, missile, sciencepack, meteors, ammopacks, missiles, sciencepacks, gameOver, score, screen); //update stanu gry
 
-		update(win, starship, meteor, ammopack, missile, sciencepack, meteors, ammopacks, missiles, sciencepacks, gameOver, score); //update stanu gry
+			draw(win, starship, meteors, ammopacks, missiles, sciencepacks, gameOver);		//rysuje gre
+			break;
+		}
+		default:
+			break;
+		}
+		
 
-		draw(win, starship, meteors, ammopacks, missiles, sciencepacks, gameOver);		//rysuje gre
+		wrefresh(win);	//odświeżamy okno
 
-		wrefresh(win);	//odœwie¿amy okno
-
-		Sleep(33);
+		Sleep(33);	//ok. 30FPS
 
 
 		if (gameOver == false)
@@ -314,14 +425,14 @@ int main()
 		else
 		{
 			save(file, starship);
+			wclear(win);
+			endMenu(win, starship);
+			wrefresh(win);
 			Sleep(5000);
-			getch();
+			system("pause");
 		}
 
 	}
-
-
-
 
 	//usuwa pamiêæ i zamyka ncurses
 	endwin();
